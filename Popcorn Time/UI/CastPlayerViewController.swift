@@ -226,6 +226,12 @@ class CastPlayerViewController: UIViewController, GCKRemoteMediaClientListener, 
         super.init(coder: aDecoder)
         remoteMediaClient?.addListener(self)
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        pickerView?.setNeedsLayout()
+        pickerView?.layoutIfNeeded()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

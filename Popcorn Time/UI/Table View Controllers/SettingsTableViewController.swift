@@ -36,6 +36,14 @@ class SettingsTableViewController: UITableViewController, PCTTablePickerViewDele
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        pickerView?.setNeedsLayout()
+        pickerView?.layoutIfNeeded()
+        tablePickerView?.setNeedsLayout()
+        tablePickerView?.layoutIfNeeded()
+    }
+    
     // MARK: - UITableViewDelegate
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -66,18 +74,18 @@ class SettingsTableViewController: UITableViewController, PCTTablePickerViewDele
             } else if indexPath.row == 3 {
                 for familyName in UIFont.familyNames() {
                     for fontName in UIFont.fontNamesForFamilyName(familyName) {
-                        let font = UIFont(name: fontName, size: 25)!; let traits = font.fontDescriptor().symbolicTraits
+                        let font = UIFont(name: fontName, size: 16)!; let traits = font.fontDescriptor().symbolicTraits
                         if !traits.contains(.TraitCondensed) && !traits.contains(.TraitBold) && !traits.contains(.TraitItalic) && !fontName.contains("Thin") && !fontName.contains("Light") && !fontName.contains("Medium") && !fontName.contains("Black") {
-                            dict[fontName] = UIFont(name: fontName, size: 25)
+                            dict[fontName] = UIFont(name: fontName, size: 16)
                         }
                     }
                 }
-                dict["Default"] = UIFont.systemFontOfSize(25)
+                dict["Default"] = UIFont.systemFontOfSize(16)
                 pickerView.componentDataSources = [dict]
                 pickerView.selectedItems = [selectedItem ?? cell.detailTextLabel!.text!]
                 pickerView.attributesForComponents = [NSFontAttributeName]
             } else if indexPath.row == 4 {
-                dict = ["Normal": UIFont.systemFontOfSize(25), "Bold": UIFont.boldSystemFontOfSize(25), "Italic": UIFont.italicSystemFontOfSize(25), "Bold-Italic": UIFont.systemFontOfSize(25).boldItalic()]
+                dict = ["Normal": UIFont.systemFontOfSize(16), "Bold": UIFont.boldSystemFontOfSize(16), "Italic": UIFont.italicSystemFontOfSize(16), "Bold-Italic": UIFont.systemFontOfSize(16).boldItalic()]
                 pickerView.componentDataSources = [dict]
                 pickerView.selectedItems = [selectedItem ?? cell.detailTextLabel!.text!]
                 pickerView.attributesForComponents = [NSFontAttributeName]

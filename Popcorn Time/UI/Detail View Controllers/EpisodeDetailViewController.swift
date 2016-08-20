@@ -38,6 +38,12 @@ class EpisodeDetailViewController: UIViewController, PCTTablePickerViewDelegate,
             delegate?.didDismissViewController(self)
         }
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        subtitlesTablePickerView?.setNeedsLayout()
+        subtitlesTablePickerView?.layoutIfNeeded()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +70,7 @@ class EpisodeDetailViewController: UIViewController, PCTTablePickerViewDelegate,
                 if let link = self.currentItem.currentSubtitle?.link {
                     self.subtitlesTablePickerView.selectedItems = [link]
                 }
-                self.view.addSubview(self.subtitlesTablePickerView!)
+                self.view.addSubview(self.subtitlesTablePickerView)
                 
             }
         }

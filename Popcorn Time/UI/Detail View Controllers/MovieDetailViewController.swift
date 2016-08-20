@@ -22,6 +22,12 @@ class MovieDetailViewController: DetailItemOverviewViewController, PCTTablePicke
         WatchlistManager.movieManager.getProgress()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        subtitlesTablePickerView?.setNeedsLayout()
+        subtitlesTablePickerView?.layoutIfNeeded()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = currentItem.title

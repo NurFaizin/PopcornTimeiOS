@@ -73,6 +73,7 @@ public class PCTPickerView: UIView, UIPickerViewDataSource, UIPickerViewDelegate
         layoutView()
     }
     
+    
     /**
      Designated Initialiser. Creates a UIPickerView with toolbar on top to handle dismissal of the view. Also handles hiding and showing animations.
      
@@ -106,7 +107,7 @@ public class PCTPickerView: UIView, UIPickerViewDataSource, UIPickerViewDelegate
         dimmingView.alpha = 0
         dimmingView.hidden = true
         dimmingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(cancel)))
-        view.frame.origin.y = UIScreen.mainScreen().bounds.height
+        view.frame.origin.y = self.superView.bounds.height
     }
     /**
      This method of initialisation is not supported.
@@ -124,11 +125,11 @@ public class PCTPickerView: UIView, UIPickerViewDataSource, UIPickerViewDelegate
         dimmingView.hidden = false
         view.setNeedsLayout()
         view.layoutIfNeeded()
-        self.view.frame.origin.y = UIScreen.mainScreen().bounds.height
+        self.view.frame.origin.y = self.superView.bounds.height
         hidden = false
         UIView.animateWithDuration(speed, delay: 0, options: .CurveEaseInOut, animations: {
             self.dimmingView.alpha = 0.6
-            self.view.frame.origin.y = self.superView.frame.height - self.view.frame.height
+            self.view.frame.origin.y = self.superView.bounds.height - (self.superView.bounds.height / 2.7)
             }, completion: nil)
     }
     /**
@@ -144,9 +145,9 @@ public class PCTPickerView: UIView, UIPickerViewDataSource, UIPickerViewDelegate
             }
             selectedItems = Array(selected.keys).reverse()
             self.delegate?.pickerView?(self, willClose: selected)
-            UIView.animateWithDuration(speed, delay: 0, options: .CurveEaseInOut, animations: { [weak self] in
-                self?.dimmingView.alpha = 0
-                self?.view.frame.origin.y = UIScreen.mainScreen().bounds.height
+            UIView.animateWithDuration(speed, delay: 0, options: .CurveEaseInOut, animations: { [unowned self] in
+                self.dimmingView.alpha = 0
+                self.view.frame.origin.y = self.superView.bounds.height
                 }, completion: { [unowned self] _ in
                     self.delegate?.pickerView?(self, didClose: selected)
                     self.dimmingView.hidden = true
@@ -191,10 +192,10 @@ public class PCTPickerView: UIView, UIPickerViewDataSource, UIPickerViewDelegate
     
     // MARK: Private methods
     
-    private func layoutView() {
-        frame = CGRect(x: 0, y: 0, width: superView.frame.width, height: UIScreen.mainScreen().bounds.height)
+    @objc private func layoutView() {
+        frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: self.superView.bounds.height)
         dimmingView.frame = superView.bounds
-        view.frame = CGRect(origin: CGPoint(x: 0, y: UIScreen.mainScreen().bounds.height - view.frame.size.height), size: CGSize(width: superView.frame.width, height: UIScreen.mainScreen().bounds.height / 2.7))
+        view.frame = CGRect(origin: CGPoint(x: 0, y: self.superView.bounds.height - (self.superView.bounds.height / 2.7)), size: CGSize(width: superView.bounds.width, height: self.superView.bounds.height / 2.7))
     }
     
     private func loadNib() {

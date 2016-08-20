@@ -167,11 +167,11 @@ public class PCTTablePickerView: UIView, UITableViewDataSource, UITableViewDeleg
         dimmingView.hidden = false
         view.setNeedsLayout()
         view.layoutIfNeeded()
-        self.view.frame.origin.y = UIScreen.mainScreen().bounds.height
+        self.view.frame.origin.y = self.superView.bounds.height
         hidden = false
         UIView.animateWithDuration(speed, delay: 0, options: .CurveEaseInOut, animations: {
             self.dimmingView.alpha = 0.6
-            self.view.frame.origin.y = UIScreen.mainScreen().bounds.height - self.view.frame.height
+            self.view.frame.origin.y = self.superView.bounds.height - (self.superView.bounds.height / 2.7)
             }, completion: nil)
 	}
     /**
@@ -181,7 +181,7 @@ public class PCTTablePickerView: UIView, UITableViewDataSource, UITableViewDeleg
 		if visible {
             UIView.animateWithDuration(speed, delay: 0, options: .CurveEaseInOut, animations: { [unowned self] in
                 self.dimmingView.alpha = 0
-                self.view.frame.origin.y = UIScreen.mainScreen().bounds.height
+                self.view.frame.origin.y = self.superView.bounds.height
                 self.delegate?.tablePickerView?(self, willClose: self.selectedItems)
                 }, completion: { [unowned self] _ in
                     self.dimmingView.hidden = true
@@ -265,13 +265,13 @@ public class PCTTablePickerView: UIView, UITableViewDataSource, UITableViewDeleg
         dimmingView.alpha = 0
         dimmingView.hidden = true
         dimmingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(done)))
-        view.frame.origin.y = UIScreen.mainScreen().bounds.height
+        view.frame.origin.y = self.superView.bounds.height
 	}
     
     private func layoutView() {
-        frame = CGRect(x: 0, y: 0, width: superView.frame.width, height: UIScreen.mainScreen().bounds.height)
+        frame = CGRect(x: 0, y: 0, width: superView.frame.width, height: self.superView.bounds.height)
         dimmingView.frame = superView.bounds
-        view.frame = CGRect(origin: CGPoint(x: 0, y: UIScreen.mainScreen().bounds.height - view.frame.size.height), size: CGSize(width: superView.frame.width, height: UIScreen.mainScreen().bounds.height / 2.7))
+        view.frame = CGRect(origin: CGPoint(x: 0, y: self.superView.bounds.height - (self.superView.bounds.height / 2.7)), size: CGSize(width: superView.bounds.width, height: self.superView.bounds.height / 2.7))
     }
 	
 	private func loadNib() {
