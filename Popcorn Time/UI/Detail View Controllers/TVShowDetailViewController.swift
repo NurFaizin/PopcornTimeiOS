@@ -181,42 +181,56 @@ class TVShowDetailViewController: DetailItemOverviewViewController, UITableViewD
         loadingViewController.transitioningDelegate = self
         loadingViewController.backgroundImage = backgroundImageView.image
         presentViewController(loadingViewController, animated: animated, completion: nil)
-        let magnet = cleanMagnet(media.currentTorrent.url)
-        let moviePlayer = self.storyboard!.instantiateViewControllerWithIdentifier("PCTPlayerViewController") as! PCTPlayerViewController
-        moviePlayer.delegate = self
-        let currentProgress = WatchlistManager.episodeManager.currentProgress(media.id)
-        PTTorrentStreamer.sharedStreamer().startStreamingFromFileOrMagnetLink(magnet, progress: { status in
-            loadingViewController.progress = status.bufferingProgress
-            loadingViewController.speed = Int(status.downloadSpeed)
-            loadingViewController.seeds = Int(status.seeds)
-            loadingViewController.updateProgress()
-            moviePlayer.bufferProgressView?.progress = status.totalProgreess
-            }, readyToPlay: { (videoFileURL, videoFilePath) in
-                loadingViewController.dismissViewControllerAnimated(false, completion: nil)
-                var nextEpisode: PCTEpisode? = nil
-                if self.episodesLeftInShow.count > 0 {
-                    nextEpisode = self.episodesLeftInShow.first
-                    self.episodesLeftInShow.removeFirst()
+        downloadTorrentFile(media.currentTorrent.url) { [unowned self] (url, error) in
+            if let url = url {
+                print(url)
+                let moviePlayer = self.storyboard!.instantiateViewControllerWithIdentifier("PCTPlayerViewController") as! PCTPlayerViewController
+                moviePlayer.delegate = self
+                let currentProgress = WatchlistManager.episodeManager.currentProgress(media.id)
+                let castDevice = GCKCastContext.sharedInstance().sessionManager.currentSession?.device
+                PTTorrentStreamer.sharedStreamer().startStreamingFromFileOrMagnetLink(url, progress: { status in
+                    loadingViewController.progress = status.bufferingProgress
+                    loadingViewController.speed = Int(status.downloadSpeed)
+                    loadingViewController.seeds = Int(status.seeds)
+                    loadingViewController.updateProgress()
+                    moviePlayer.bufferProgressView?.progress = status.totalProgreess
+                    }, readyToPlay: {(videoFileURL, videoFilePath) in
+                        loadingViewController.dismissViewControllerAnimated(false, completion: nil)
+                        var nextEpisode: PCTEpisode? = nil
+                        if self.episodesLeftInShow.count > 0 {
+                            nextEpisode = self.episodesLeftInShow.first
+                            self.episodesLeftInShow.removeFirst()
+                        }
+                        if onChromecast {
+                            if GCKCastContext.sharedInstance().sessionManager.currentSession == nil {
+                                GCKCastContext.sharedInstance().sessionManager.startSessionWithDevice(castDevice!)
+                            }
+                            let castPlayerViewController = self.storyboard?.instantiateViewControllerWithIdentifier("CastPlayerViewController") as! CastPlayerViewController
+                            let castMetadata = PCTCastMetaData(episode: media, startPosition: NSTimeInterval(currentProgress), url: videoFileURL.relativeString!, mediaAssetsPath: videoFilePath.URLByDeletingLastPathComponent!)
+                            GoogleCastManager(castMetadata: castMetadata).sessionManager(GCKCastContext.sharedInstance().sessionManager, didStartSession: GCKCastContext.sharedInstance().sessionManager.currentSession!)
+                            castPlayerViewController.backgroundImage = self.backgroundImageView.image
+                            castPlayerViewController.title = media.title
+                            castPlayerViewController.media = media
+                            castPlayerViewController.directory = videoFilePath.URLByDeletingLastPathComponent!
+                            self.presentViewController(castPlayerViewController, animated: true, completion: nil)
+                        } else {
+                            moviePlayer.play(media, fromURL: videoFileURL, progress: currentProgress, nextEpisode: nextEpisode, directory: videoFilePath.URLByDeletingLastPathComponent!)
+                            self.presentViewController(moviePlayer, animated: true, completion: nil)
+                        }
+                }) { error in
+                    loadingViewController.cancelButtonPressed()
+                    let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                    print("Error is \(error)")
                 }
-                if onChromecast {
-                    let castPlayerViewController = self.storyboard?.instantiateViewControllerWithIdentifier("CastPlayerViewController") as! CastPlayerViewController
-                    let castMetadata = PCTCastMetaData(episode: media, startPosition: NSTimeInterval(currentProgress), url: videoFileURL.relativeString!, mediaAssetsPath: videoFilePath.URLByDeletingLastPathComponent!)
-                    GoogleCastManager(castMetadata: castMetadata).sessionManager(GCKCastContext.sharedInstance().sessionManager, didStartSession: GCKCastContext.sharedInstance().sessionManager.currentSession!)
-                    castPlayerViewController.backgroundImage = self.backgroundImageView.image
-                    castPlayerViewController.title = media.title
-                    castPlayerViewController.media = media
-                    castPlayerViewController.directory = videoFilePath.URLByDeletingLastPathComponent!
-                    self.presentViewController(castPlayerViewController, animated: true, completion: nil)
-                } else {
-                    moviePlayer.play(media, fromURL: videoFileURL, progress: currentProgress, nextEpisode: nextEpisode, directory: videoFilePath.URLByDeletingLastPathComponent!)
-                    self.presentViewController(moviePlayer, animated: true, completion: nil)
-                }
-        }) { error in
-            loadingViewController.cancelButtonPressed()
-            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
-            print("Error is \(error)")
+            } else if let error = error {
+                loadingViewController.dismissViewControllerAnimated(true, completion: { [unowned self] in
+                    let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                })
+            }
         }
     }
     

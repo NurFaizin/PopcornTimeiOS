@@ -52,7 +52,7 @@ class SettingsTableViewController: UITableViewController, PCTTablePickerViewDele
         case 0 where indexPath.row == 2:
             tablePickerView?.toggle()
         case 2:
-            let selectedItem = ud.stringForKey("PreferredSubtitle\(cell.textLabel!.text!.capitalizedString.stringByReplacingOccurrencesOfString(" ", withString: ""))")
+            let selectedItem = ud.stringForKey("PreferredSubtitle\(cell.textLabel!.text!.capitalizedString.whiteSpacelessString)")
             var dict = [String: AnyObject]()
             if indexPath.row == 0 || indexPath.row == 2 {
                 for (index, color) in UIColor.systemColors().enumerate() {
@@ -130,7 +130,7 @@ class SettingsTableViewController: UITableViewController, PCTTablePickerViewDele
                 cell.detailTextLabel?.text = preferredSubtitleLanguage
             }
         case 2:
-            if let string = ud.stringForKey("PreferredSubtitle\(cell.textLabel!.text!.capitalizedString.stringByReplacingOccurrencesOfString(" ", withString: ""))") {
+            if let string = ud.stringForKey("PreferredSubtitle\(cell.textLabel!.text!.capitalizedString.whiteSpacelessString)") {
                 cell.detailTextLabel?.text = string
             }
         case 4 where indexPath.row == 1:
@@ -148,12 +148,8 @@ class SettingsTableViewController: UITableViewController, PCTTablePickerViewDele
     
     // MARK: - PCTTablePickerViewDelegate
     
-    func tablePickerView(tablePickerView: PCTTablePickerView, didChange items: [String]) {
-        if items.count > 0 {
-            ud.setObject(items.first!, forKey: "PreferredSubtitleLanguage")
-        } else {
-            ud.setObject("None", forKey: "PreferredSubtitleLanguage")
-        }
+    func tablePickerView(tablePickerView: PCTTablePickerView, didClose items: [String]) {
+        ud.setObject(items.first ?? "None", forKey: "PreferredSubtitleLanguage")
         tableView.reloadData()
     }
     
@@ -165,9 +161,9 @@ class SettingsTableViewController: UITableViewController, PCTTablePickerViewDele
     
     // MARK: - PCTPickerViewDelegate
     
-    func pickerView(pickerView: PCTPickerView, didChange items: [String : AnyObject]) {
+    func pickerView(pickerView: PCTPickerView, didClose items: [String : AnyObject]) {
         if let index = tableView.indexPathForSelectedRow, let text = tableView.cellForRowAtIndexPath(index)?.textLabel?.text {
-            ud.setObject(items.keys.first, forKey: "PreferredSubtitle\(text.capitalizedString.stringByReplacingOccurrencesOfString(" ", withString: ""))")
+            ud.setObject(items.keys.first, forKey: "PreferredSubtitle\(text.capitalizedString.whiteSpacelessString)")
         }
         tableView.reloadData()
     }

@@ -4,7 +4,7 @@ import UIKit
 
 class PCTEpisodeDetailPresentationController: UIPresentationController {
     
-    var preferredContentHeight: CGFloat = 0
+    var containerContentSize = CGSizeZero
     
     lazy var dimmingView: UIView = {
         let view = UIView()
@@ -22,7 +22,7 @@ class PCTEpisodeDetailPresentationController: UIPresentationController {
     
     override func preferredContentSizeDidChangeForChildContentContainer(container: UIContentContainer) {
         super.preferredContentSizeDidChangeForChildContentContainer(container)
-        preferredContentHeight = container.preferredContentSize.height
+        containerContentSize = container.preferredContentSize
         containerViewWillLayoutSubviews()
     }
     
@@ -40,26 +40,22 @@ class PCTEpisodeDetailPresentationController: UIPresentationController {
         super.dismissalTransitionWillBegin()
         presentedViewController.transitionCoordinator()?.animateAlongsideTransition({ [weak self] context in
             self?.dimmingView.alpha = 0
-            }, completion: { [weak self] _ in
-                self?.dimmingView.removeFromSuperview()
-        })
+            }, completion: nil)
     }
     
     override func frameOfPresentedViewInContainerView() -> CGRect {
         let screenSize = UIScreen.mainScreen().bounds.size
-        if preferredContentHeight < screenSize.height {
-            return CGRect(x: 0, y: screenSize.height - preferredContentHeight, width: containerView!.frame.width, height: preferredContentHeight)
+        if containerContentSize.height < screenSize.height {
+            return CGRect(x: 0, y: screenSize.height - containerContentSize.height, width: containerView?.bounds.width ?? containerContentSize.width, height: containerContentSize.height)
         }
-        
         return CGRect(origin: CGPointZero, size: screenSize)
     }
-    
-    override func containerViewWillLayoutSubviews() {
-        super.containerViewWillLayoutSubviews()
+    override func containerViewDidLayoutSubviews() {
+        super.containerViewDidLayoutSubviews()
         if let bounds = containerView?.bounds {
             dimmingView.frame = bounds
-            presentedView()?.frame = frameOfPresentedViewInContainerView()
         }
+        presentedView()?.frame = frameOfPresentedViewInContainerView()
     }
 }
 
@@ -74,7 +70,6 @@ class  PCTEpisodeDetailAnimatedTransitioning: NSObject, UIViewControllerAnimated
     
     init(isPresenting: Bool) {
         self.isPresenting = isPresenting
-        
         super.init()
     }
     
@@ -101,9 +96,10 @@ class  PCTEpisodeDetailAnimatedTransitioning: NSObject, UIViewControllerAnimated
         }
         
         containerView.addSubview(presentedControllerView)
+        presentedControllerView.frame.origin.y = UIScreen.mainScreen().bounds.height
         
         UIView.animateWithDuration(transitionDuration(transitionContext), delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .AllowUserInteraction, animations: {
-            presentedControllerView.frame.origin.y = -UIScreen.mainScreen().bounds.height
+            presentedControllerView.frame.origin.y = UIScreen.mainScreen().bounds.height - presentedControllerView.bounds.height
             }, completion: { completed in
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
         })
@@ -111,14 +107,13 @@ class  PCTEpisodeDetailAnimatedTransitioning: NSObject, UIViewControllerAnimated
     
     func animateDismissalWithTransitionContext(transitionContext: UIViewControllerContextTransitioning) {
         guard
-            let presentedControllerView = transitionContext.viewForKey(UITransitionContextFromViewKey),
-            let containerView = transitionContext.containerView()
+            let presentedControllerView = transitionContext.viewForKey(UITransitionContextFromViewKey)
             else {
                 return
         }
         
         UIView.animateWithDuration(transitionDuration(transitionContext), delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .AllowUserInteraction, animations: {
-            presentedControllerView.center.y += containerView.bounds.size.height
+            presentedControllerView.frame.origin.y = UIScreen.mainScreen().bounds.height
             }, completion: { _ in
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
         })

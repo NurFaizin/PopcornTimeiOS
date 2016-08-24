@@ -282,8 +282,8 @@ extension String {
         } ?? start
     }
     
-    func contains(aString: String) -> Bool{
-        return self.rangeOfString(aString, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil
+    func contains(aString: String) -> Bool {
+        return rangeOfString(aString, options: NSStringCompareOptions.CaseInsensitiveSearch) != nil
     }
     /// Produce a string of which all spaces are removed.
     var whiteSpacelessString: String {
@@ -629,6 +629,16 @@ extension UITableView {
             header.frame = frame
             tableHeaderView = header
         }
+    }
+    
+    var indexPathsForAllCells: [NSIndexPath] {
+        var allIndexPaths = [NSIndexPath]()
+        for section in 0..<numberOfSections {
+            for row in 0..<numberOfRowsInSection(section) {
+                allIndexPaths.append(NSIndexPath(forRow: row, inSection: section))
+            }
+        }
+        return allIndexPaths
     }
 }
 

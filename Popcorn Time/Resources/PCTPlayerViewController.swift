@@ -233,12 +233,8 @@ class PCTPlayerViewController: UIViewController, UIGestureRecognizerDelegate, UI
         self.directory = directory
         if let subtitles = media.subtitles {
             self.subtitles = subtitles
-            self.currentSubtitle = media.currentSubtitle
-        } else if let subtitles = media.subtitles {
-            self.subtitles = subtitles
-            self.currentSubtitle = media.currentSubtitle
+            currentSubtitle = media.currentSubtitle
         }
-        
     }
     
     private func openSubtitles(filePath: NSURL) {
