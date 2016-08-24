@@ -99,7 +99,7 @@ class GoogleCastManager: NSObject, GCKDeviceScannerListener, GCKSessionManagerLi
         let metadata = GCKMediaMetadata(metadataType: .Movie)
         metadata.setString(castMetadata.title, forKey: kGCKMetadataKeyTitle)
         metadata.addImage(GCKImage(URL: castMetadata.imageUrl, width: 480, height: 720))
-        let mediaInfo = GCKMediaInformation(contentID: castMetadata.url, streamType: .Buffered, contentType: castMetadata.contentType, metadata: metadata, streamDuration: 0, mediaTracks: mediaTrack, textTrackStyle: GCKMediaTextTrackStyle.createDefault(), customData: nil)
+        let mediaInfo = GCKMediaInformation(contentID: castMetadata.url, streamType: .Buffered, contentType: castMetadata.contentType, metadata: metadata, streamDuration: 0, mediaTracks: nil, textTrackStyle: GCKMediaTextTrackStyle.createDefault(), customData: nil)
         sessionManager.currentCastSession!.remoteMediaClient.loadMedia(mediaInfo, autoplay: true, playPosition: castMetadata.startPosition)
     }
 

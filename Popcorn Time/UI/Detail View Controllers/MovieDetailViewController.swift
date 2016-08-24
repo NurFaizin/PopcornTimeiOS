@@ -62,20 +62,19 @@ class MovieDetailViewController: DetailItemOverviewViewController, PCTTablePicke
                 } else {
                     self.subtitlesButton.setTitle("None ▾", forState: .Normal)
                     self.subtitlesButton.userInteractionEnabled = true
-                    if let preferredSubtitle = NSUserDefaults.standardUserDefaults().objectForKey("PreferredSubtitleLanguage") as? String {
-                        for subtitle in subtitles {
-                            if subtitle.language == preferredSubtitle {
-                                self.currentItem.currentSubtitle = subtitle
-                                self.subtitlesButton.setTitle("\(subtitle.language) ▾", forState: .Normal)
-                            }
-                        }
+                    if let preferredSubtitle = NSUserDefaults.standardUserDefaults().objectForKey("PreferredSubtitleLanguage") as? String where preferredSubtitle != "None" {
+                        let languages = subtitles.map({$0.language})
+                        let index = languages.indexOf(languages.filter({$0 == preferredSubtitle}).first!)!
+                        let subtitle = self.currentItem.subtitles![index]
+                        self.currentItem.currentSubtitle = subtitle
+                        self.subtitlesButton.setTitle(subtitle.language + " ▾", forState: .Normal)
                     }
                 }
                 self.subtitlesTablePickerView = PCTTablePickerView(superView: self.view, sourceDict: PCTSubtitle.dictValue(subtitles), self)
                 if let link = self.currentItem.currentSubtitle?.link {
                     self.subtitlesTablePickerView.selectedItems = [link]
                 }
-                self.tabBarController?.view.addSubview(self.subtitlesTablePickerView!)
+                self.tabBarController?.view.addSubview(self.subtitlesTablePickerView)
             })
         })
         torrentHealth.backgroundColor = currentItem.currentTorrent.health.color()
@@ -144,41 +143,51 @@ class MovieDetailViewController: DetailItemOverviewViewController, PCTTablePicke
         loadingViewController.transitioningDelegate = self
         loadingViewController.backgroundImage = backgroundImageView.image
         presentViewController(loadingViewController, animated: true, completion: nil)
-        let magnet = cleanMagnet(currentItem.currentTorrent.url)
-        let moviePlayer = self.storyboard!.instantiateViewControllerWithIdentifier("PCTPlayerViewController") as! PCTPlayerViewController
-        let currentProgress = WatchlistManager.movieManager.currentProgress(currentItem.id)
-        let castDevice = GCKCastContext.sharedInstance().sessionManager.currentSession?.device
-        PTTorrentStreamer.sharedStreamer().startStreamingFromFileOrMagnetLink(magnet, progress: { (status) in
-            loadingViewController.progress = status.bufferingProgress
-            loadingViewController.speed = Int(status.downloadSpeed)
-            loadingViewController.seeds = Int(status.seeds)
-            loadingViewController.updateProgress()
-            moviePlayer.bufferProgressView?.progress = status.totalProgreess
-            }, readyToPlay: { (videoFileURL, videoFilePath) in
-                loadingViewController.dismissViewControllerAnimated(false, completion: nil)
-                if onChromecast {
-                    if GCKCastContext.sharedInstance().sessionManager.currentSession == nil {
-                        GCKCastContext.sharedInstance().sessionManager.startSessionWithDevice(castDevice!)
-                    }
-                    let castPlayerViewController = self.storyboard?.instantiateViewControllerWithIdentifier("CastPlayerViewController") as! CastPlayerViewController
-                    let castMetadata = PCTCastMetaData(movie: media, startPosition: NSTimeInterval(currentProgress), url: videoFileURL.relativeString!, mediaAssetsPath: videoFilePath.URLByDeletingLastPathComponent!)
-                    GoogleCastManager(castMetadata: castMetadata).sessionManager(GCKCastContext.sharedInstance().sessionManager, didStartSession: GCKCastContext.sharedInstance().sessionManager.currentSession!)
-                    castPlayerViewController.backgroundImage = self.backgroundImageView.image
-                    castPlayerViewController.title = media.title
-                    castPlayerViewController.media = media
-                    castPlayerViewController.directory = videoFilePath.URLByDeletingLastPathComponent!
-                    self.presentViewController(castPlayerViewController, animated: true, completion: nil)
-                } else {
-                    moviePlayer.play(media, fromURL: videoFileURL, progress: currentProgress, directory: videoFilePath.URLByDeletingLastPathComponent!)
-                    moviePlayer.delegate = self
-                    self.presentViewController(moviePlayer, animated: true, completion: nil)
+        downloadTorrentFile(media.currentTorrent.url) { [unowned self] (url, error) in
+            if let url = url {
+                let moviePlayer = self.storyboard!.instantiateViewControllerWithIdentifier("PCTPlayerViewController") as! PCTPlayerViewController
+                moviePlayer.delegate = self
+                let currentProgress = WatchlistManager.movieManager.currentProgress(media.id)
+                let castDevice = GCKCastContext.sharedInstance().sessionManager.currentSession?.device
+                PTTorrentStreamer.sharedStreamer().startStreamingFromFileOrMagnetLink(url, progress: { status in
+                    loadingViewController.progress = status.bufferingProgress
+                    loadingViewController.speed = Int(status.downloadSpeed)
+                    loadingViewController.seeds = Int(status.seeds)
+                    loadingViewController.updateProgress()
+                    moviePlayer.bufferProgressView?.progress = status.totalProgreess
+                    }, readyToPlay: {(videoFileURL, videoFilePath) in
+                        loadingViewController.dismissViewControllerAnimated(false, completion: nil)
+                        if onChromecast {
+                            if GCKCastContext.sharedInstance().sessionManager.currentSession == nil {
+                                GCKCastContext.sharedInstance().sessionManager.startSessionWithDevice(castDevice!)
+                            }
+                            let castPlayerViewController = self.storyboard?.instantiateViewControllerWithIdentifier("CastPlayerViewController") as! CastPlayerViewController
+                            let castMetadata = PCTCastMetaData(movie: media, startPosition: NSTimeInterval(currentProgress), url: videoFileURL.relativeString!, mediaAssetsPath: videoFilePath.URLByDeletingLastPathComponent!)
+                            GoogleCastManager(castMetadata: castMetadata).sessionManager(GCKCastContext.sharedInstance().sessionManager, didStartSession: GCKCastContext.sharedInstance().sessionManager.currentSession!)
+                            castPlayerViewController.backgroundImage = self.backgroundImageView.image
+                            castPlayerViewController.title = media.title
+                            castPlayerViewController.media = media
+                            castPlayerViewController.directory = videoFilePath.URLByDeletingLastPathComponent!
+                            self.presentViewController(castPlayerViewController, animated: true, completion: nil)
+                        } else {
+                            moviePlayer.play(media, fromURL: videoFileURL, progress: currentProgress, directory: videoFilePath.URLByDeletingLastPathComponent!)
+                            moviePlayer.delegate = self
+                            self.presentViewController(moviePlayer, animated: true, completion: nil)
+                        }
+                }) { error in
+                    loadingViewController.cancelButtonPressed()
+                    let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                    print("Error is \(error)")
                 }
-            }) { error in
-                loadingViewController.cancelButtonPressed()
-                let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
-                self.presentViewController(alert, animated: true, completion: nil)
-                print("Error is \(error)")
+            } else if let error = error {
+                loadingViewController.dismissViewControllerAnimated(true, completion: { [unowned self] in
+                    let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                    })
+            }
         }
     }
     
@@ -186,20 +195,19 @@ class MovieDetailViewController: DetailItemOverviewViewController, PCTTablePicke
         let vc = XCDYouTubeVideoPlayerViewController(videoIdentifier: currentItem.trailorURLString)
         presentViewController(vc, animated: true, completion: nil)
 	}
-
-	func tablePickerView(tablePickerView: PCTTablePickerView, didChange items: [String]) {
+    
+    func tablePickerView(tablePickerView: PCTTablePickerView, didClose items: [String]) {
         if items.count == 0 {
             currentItem.currentSubtitle = nil
             subtitlesButton.setTitle("None ▾", forState: .Normal)
         } else {
-            for subtitle in currentItem.subtitles! {
-                if items[0] == subtitle.link {
-                    currentItem.currentSubtitle = subtitle
-                    subtitlesButton.setTitle(subtitle.language + " ▾", forState: .Normal)
-                }
-            }
+            let links = currentItem.subtitles!.map({$0.link})
+            let index = links.indexOf(links.filter({$0 == items.first!}).first!)!
+            let subtitle = currentItem.subtitles![index]
+            currentItem.currentSubtitle = subtitle
+            subtitlesButton.setTitle(subtitle.language + " ▾", forState: .Normal)
         }
-	}
+    }
     
     func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return presented is LoadingViewController ? PCTLoadingViewAnimatedTransitioning(isPresenting: true, sourceController: source) : nil

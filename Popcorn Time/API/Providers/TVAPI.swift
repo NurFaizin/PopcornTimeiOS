@@ -195,3 +195,25 @@ class TVAPI {
         })
     }
 }
+
+func downloadTorrentFile(path: String, completion: (url: String?, error: NSError?) -> Void) {
+    if path.hasPrefix("magnet") {
+        completion(url: cleanMagnet(path), error: nil)
+        return
+    }
+    var finalPath: NSURL!
+    Alamofire.download(.GET, path, destination: { (temporaryURL, response) -> NSURL in
+        finalPath = NSURL(fileURLWithPath: downloadsDirectory).URLByAppendingPathComponent(response.suggestedFilename!)
+        if NSFileManager.defaultManager().fileExistsAtPath(finalPath.relativePath!) {
+            try! NSFileManager.defaultManager().removeItemAtPath(finalPath.relativePath!)
+        }
+        return finalPath
+    }).validate().response { (_, _, _, error) in
+        if let error = error {
+            print(error)
+            completion(url: nil, error: error)
+            return
+        }
+        completion(url: finalPath.relativePath!, error: nil)
+    }
+}

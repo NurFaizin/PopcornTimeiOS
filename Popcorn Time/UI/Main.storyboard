@@ -2394,43 +2394,43 @@ By using 'Popcorn Time' or accessing this site you affirm that you are either mo
                         <viewControllerLayoutGuide type="bottom" id="RAX-OI-ffA"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="uYT-27-WQP">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="VEc-Xt-eHf">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="clipsToBounds" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
                             <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zpx-Rj-7KQ">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="F8F-JJ-yDV">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhR-tI-owX">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="sCC-wY-Abl">
-                                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wer-ja-W3q">
-                                                        <rect key="frame" x="176" y="504" width="23" height="25"/>
+                                                        <rect key="frame" x="289" y="729" width="23" height="25"/>
                                                         <state key="normal" image="Play"/>
                                                         <connections>
                                                             <action selector="playPause:" destination="9g2-2Z-FUe" eventType="touchUpInside" id="hQN-Jr-7hu"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bzI-qL-pwk">
-                                                        <rect key="frame" x="19" y="507" width="24" height="19"/>
+                                                        <rect key="frame" x="19" y="732" width="24" height="19"/>
                                                         <state key="normal" image="Media Selection"/>
                                                         <connections>
                                                             <action selector="subtitles:" destination="9g2-2Z-FUe" eventType="touchUpInside" id="fCf-tt-PGt"/>
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tgk-yf-Lhx">
-                                                        <rect key="frame" x="166" y="423" width="44" height="21"/>
+                                                        <rect key="frame" x="278" y="648" width="44" height="21"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="21" id="uhJ-ml-dIF"/>
                                                         </constraints>
@@ -2439,19 +2439,19 @@ By using 'Popcorn Time' or accessing this site you affirm that you are either mo
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="--:--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OPV-HL-q7d">
-                                                        <rect key="frame" x="12" y="391" width="27" height="15"/>
+                                                        <rect key="frame" x="12" y="616" width="27" height="15"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="--:--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iOU-Ub-Kzg">
-                                                        <rect key="frame" x="336" y="391" width="27" height="15"/>
+                                                        <rect key="frame" x="561" y="616" width="27" height="15"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="dqp-3E-NWP" customClass="PCTProgressSlider" customModule="Popcorn_Time" customModuleProvider="target">
-                                                        <rect key="frame" x="-2" y="360" width="379" height="31"/>
+                                                        <rect key="frame" x="-2" y="585" width="604" height="31"/>
                                                         <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="maximumTrackTintColor" white="1" alpha="0.5" colorSpace="calibratedWhite"/>
                                                         <connections>
@@ -2461,7 +2461,7 @@ By using 'Popcorn Time' or accessing this site you affirm that you are either mo
                                                         </connections>
                                                     </slider>
                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="1" minimumValueImage="Volume Minimum" maximumValueImage="Volume Maximum" translatesAutoresizingMaskIntoConstraints="NO" id="Gng-sI-cdS">
-                                                        <rect key="frame" x="8" y="629" width="359" height="31"/>
+                                                        <rect key="frame" x="8" y="562" width="584" height="31"/>
                                                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="minimumTrackTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="maximumTrackTintColor" white="1" alpha="0.5" colorSpace="calibratedWhite"/>
@@ -2470,7 +2470,7 @@ By using 'Popcorn Time' or accessing this site you affirm that you are either mo
                                                         </connections>
                                                     </slider>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cNf-Hh-jqc">
-                                                        <rect key="frame" x="93" y="503" width="28" height="28"/>
+                                                        <rect key="frame" x="206" y="728" width="28" height="28"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="28" id="nB5-hS-W5q"/>
                                                             <constraint firstAttribute="width" constant="28" id="tFA-Jc-ZE0"/>
@@ -2483,7 +2483,7 @@ By using 'Popcorn Time' or accessing this site you affirm that you are either mo
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="27u-Zm-lOe">
-                                                        <rect key="frame" x="254" y="503" width="28" height="28"/>
+                                                        <rect key="frame" x="367" y="728" width="28" height="28"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="28" id="98q-vI-fDg"/>
                                                             <constraint firstAttribute="width" constant="28" id="lu9-W6-myo"/>
@@ -2496,11 +2496,11 @@ By using 'Popcorn Time' or accessing this site you affirm that you are either mo
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KOj-4L-9mN">
-                                                        <rect key="frame" x="10" y="635" width="7" height="18"/>
+                                                        <rect key="frame" x="10" y="568" width="7" height="18"/>
                                                         <state key="normal" image="Volume Minimum"/>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Buq-BN-n87">
-                                                        <rect key="frame" x="348" y="635" width="17" height="18"/>
+                                                        <rect key="frame" x="573" y="568" width="17" height="18"/>
                                                         <state key="normal" image="Volume Maximum"/>
                                                     </button>
                                                 </subviews>
@@ -2530,7 +2530,7 @@ By using 'Popcorn Time' or accessing this site you affirm that you are either mo
                                             </vibrancyEffect>
                                         </visualEffectView>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="5" verticalHuggingPriority="5" horizontalCompressionResistancePriority="5" verticalCompressionResistancePriority="5" translatesAutoresizingMaskIntoConstraints="NO" id="UoZ-xq-0nq">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="375"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" priority="249" constant="432" id="XFV-32-w9P"/>
                                                 <constraint firstAttribute="width" secondItem="UoZ-xq-0nq" secondAttribute="height" multiplier="1:1" id="rEU-OK-HPb"/>
@@ -2592,7 +2592,6 @@ By using 'Popcorn Time' or accessing this site you affirm that you are either mo
                         </constraints>
                     </view>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="backgroundImageView" destination="VEc-Xt-eHf" id="oyd-6a-FrN"/>
                         <outlet property="closeButton" destination="h7E-z9-GGj" id="vW2-a9-njN"/>

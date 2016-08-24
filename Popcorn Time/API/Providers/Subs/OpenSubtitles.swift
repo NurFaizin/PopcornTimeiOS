@@ -43,8 +43,8 @@ class OpenSubtitles {
         let array: XMLRPCArray = [params]
         let limit: XMLRPCStructure = ["limit": limit]
         let queue = dispatch_queue_create("com.popcorn-time.response.queue", DISPATCH_QUEUE_CONCURRENT)
-        AlamofireXMLRPC.request(secureBaseURL, methodName: "SearchSubtitles", parameters: [token!, array, limit], headers: ["User-Agent": userAgent]).response(queue: queue, responseSerializer: Request.XMLRPCResponseSerializer(), completionHandler: { response in
-            guard response.result.isSuccess else {
+        AlamofireXMLRPC.request(secureBaseURL, methodName: "SearchSubtitles", parameters: [token!, array, limit], headers: ["User-Agent": userAgent]).validate().response(queue: queue, responseSerializer: Request.XMLRPCResponseSerializer(), completionHandler: { response in
+            guard response.result.isSuccess && Int(response.result.value![0]["status"].string!.componentsSeparatedByString(" ").first!)! == 200 else {
                 print("Error is \(response.result.error!)")
                 return
             }

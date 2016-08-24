@@ -7,7 +7,6 @@ import UIKit
 	optional func tablePickerView(tablePickerView: PCTTablePickerView, didDeselect item: String)
 	optional func tablePickerView(tablePickerView: PCTTablePickerView, didClose items: [String])
 	optional func tablePickerView(tablePickerView: PCTTablePickerView, willClose items: [String])
-	optional func tablePickerView(tablePickerView: PCTTablePickerView, didChange items: [String])
 }
 
 public class PCTTablePickerView: UIView, UITableViewDataSource, UITableViewDelegate {
@@ -165,9 +164,7 @@ public class PCTTablePickerView: UIView, UITableViewDataSource, UITableViewDeleg
             tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0) , atScrollPosition: .Top, animated: false)
         }
         dimmingView.hidden = false
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
-        self.view.frame.origin.y = self.superView.bounds.height
+        view.frame.origin.y = superView.bounds.height
         hidden = false
         UIView.animateWithDuration(speed, delay: 0, options: .CurveEaseInOut, animations: {
             self.dimmingView.alpha = 0.6
@@ -230,7 +227,7 @@ public class PCTTablePickerView: UIView, UITableViewDataSource, UITableViewDeleg
 		} else {
 			if !multipleSelect && selectedItems.count > 0 {
 				let oldSelected = selectedItems[0]
-				selectedItems = []
+				selectedItems.removeAll()
 				if let index = dataSourceKeys.indexOf(oldSelected) {
 					let oldCell = tableView.cellForRowAtIndexPath(NSIndexPath(forItem: index, inSection: 0))
 					oldCell?.accessoryType = .None
@@ -250,28 +247,28 @@ public class PCTTablePickerView: UIView, UITableViewDataSource, UITableViewDeleg
 	
 	private func prepareView() {
         loadNib()
-        self.hidden = true
+        hidden = true
         let borderTop = CALayer()
         borderTop.frame = CGRectMake(0.0, toolbar.frame.height - 1, toolbar.frame.width, 0.5);
         borderTop.backgroundColor = UIColor(red:0.17, green:0.17, blue:0.17, alpha:1.0).CGColor
         toolbar.layer.addSublayer(borderTop)
-        self.tableView.separatorColor = UIColor.darkGrayColor()
-        self.tableView.backgroundColor = UIColor.clearColor()
+        tableView.separatorColor = UIColor.darkGrayColor()
+        tableView.backgroundColor = UIColor.clearColor()
         let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
-        self.tableView.backgroundView = blurEffectView
+        tableView.backgroundView = blurEffectView
         tableView.tableFooterView = UIView(frame: CGRectZero)
         layoutView()
         insertSubview(dimmingView, belowSubview: view)
         dimmingView.alpha = 0
         dimmingView.hidden = true
         dimmingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(done)))
-        view.frame.origin.y = self.superView.bounds.height
+        view.frame.origin.y = superView.bounds.height
 	}
     
     private func layoutView() {
-        frame = CGRect(x: 0, y: 0, width: superView.frame.width, height: self.superView.bounds.height)
+        frame = CGRect(x: 0, y: 0, width: superView.frame.width, height: superView.bounds.height)
         dimmingView.frame = superView.bounds
-        view.frame = CGRect(origin: CGPoint(x: 0, y: self.superView.bounds.height - (self.superView.bounds.height / 2.7)), size: CGSize(width: superView.bounds.width, height: self.superView.bounds.height / 2.7))
+        view.frame = CGRect(origin: CGPoint(x: 0, y: superView.bounds.height - (superView.bounds.height / 2.7)), size: CGSize(width: superView.bounds.width, height: superView.bounds.height / 2.7))
     }
 	
 	private func loadNib() {
@@ -280,7 +277,6 @@ public class PCTTablePickerView: UIView, UITableViewDataSource, UITableViewDeleg
 	}
 	
 	@IBAction func done(sender: AnyObject) {
-        delegate?.tablePickerView?(self, didChange: selectedItems)
 		hide()
 	}
 }

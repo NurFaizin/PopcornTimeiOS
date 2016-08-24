@@ -242,20 +242,23 @@ class CastPlayerViewController: UIViewController, GCKRemoteMediaClientListener, 
         pickerView = PCTPickerView(superView: view, componentDataSources: [subtitles, subtitleColors, subtitleFonts], delegate: self, selectedItems: selectedSubtitleMeta, attributesForComponents: [nil, NSForegroundColorAttributeName, NSFontAttributeName])
         view.addSubview(pickerView)
         bufferView.showInView(view)
-        NSTimer.after(30.0) { [unowned self] in
-            if self.bufferView.visible && self.streamPosition == 0.0 {
-                self.bufferView.indicatorView = JGProgressHUDErrorIndicatorView()
-                self.bufferView.textLabel.text = "Error loading movie."
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(3.0 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
-                    self.close()
-                })
+        NSTimer.after(30.0) { [weak self] in
+            if let weakSelf = self {
+                if weakSelf.bufferView.visible && weakSelf.streamPosition == 0.0 {
+                    weakSelf.bufferView.indicatorView = JGProgressHUDErrorIndicatorView()
+                    weakSelf.bufferView.textLabel.text = "Error loading movie."
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(3.0 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
+                        weakSelf.close()
+                    })
+                }
             }
+            
         }
         titleLabel.text = title
         volumeSlider?.setThumbImage(UIImage(named: "Scrubber Image"), forState: .Normal)
     }
     
-    func pickerView(pickerView: PCTPickerView, didChange items: [String: AnyObject]) {
+    func pickerView(pickerView: PCTPickerView, didClose items: [String : AnyObject]) {
         selectedSubtitleMeta = Array(items.keys)
         let trackStyle = GCKMediaTextTrackStyle.createDefault()
         for (index, value) in items.values.enumerate() {
